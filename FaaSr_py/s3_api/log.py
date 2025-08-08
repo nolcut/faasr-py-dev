@@ -47,7 +47,7 @@ def faasr_log(faasr_payload, log_message):
 
         s3_client = get_default_log_boto3_client(faasr_payload)
 
-        log_download_path = Path("tmp") / log_path
+        log_download_path = Path("/tmp") / log_path
         Path(log_download_path).parent.mkdir(parents=True, exist_ok=True)
 
         bucket = faasr_payload["DataStores"][log_server_name]["Bucket"]

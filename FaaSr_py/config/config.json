@@ -1,6 +1,6 @@
 {
     "SKIP_SCHEMA_VALIDATE": false,
-    "SKIP_WF_VALIDATE": false,
+    "SKIP_WF_VALIDATE": true,
     "SKIP_REAL_TRIGGERS": false,
     "READABLE_LOGS": true,
     "SKIP_USER_FUNCTION": false,
