@@ -258,6 +258,7 @@ class Scheduler:
 
             response = lambda_client.invoke(
                 FunctionName=function,
+                InvocationType='Event',
                 Payload=json.dumps(payload),
             )
         except Exception as e:

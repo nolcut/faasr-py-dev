@@ -92,7 +92,7 @@ class Executor:
 
             if func_res != 0:
                 raise RuntimeError(
-                    f"non-zero exit code ({py_func.exitcode}) from user function"
+                    f"non-zero exit code ({repr(func_res)}) from user function"
                 )
         else:
             logger.info("SKIPPING USER FUNCTION")
