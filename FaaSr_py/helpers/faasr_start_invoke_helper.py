@@ -242,11 +242,6 @@ def faasr_install_cran(package, lib_path=None):
     lib_path = lib_path or "/tmp/Rlibs"
     os.makedirs(lib_path, exist_ok=True)
     
-    # Set environment to ensure R uses the correct library path
-    env = os.environ.copy()
-    env['R_LIBS_USER'] = lib_path
-    env['R_LIBS'] = lib_path
-    
     command = [
         "Rscript",
         "-e",
@@ -255,7 +250,7 @@ def faasr_install_cran(package, lib_path=None):
         f'repos="https://cloud.r-project.org", dependencies=TRUE, verbose=TRUE)'
     ]
     
-    result = subprocess.run(command, text=True, capture_output=True, env=env)
+    result = subprocess.run(command, text=True, capture_output=True)
     
     if result.returncode != 0:
         logger.error(

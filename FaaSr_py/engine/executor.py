@@ -70,6 +70,16 @@ class Executor:
 
                 logger.info(f"Starting function: {func_name} (R)")
 
+
+                # TESTING TODO REMOVE CRITICAL: Verify packages are there just before R starts
+                logger.info(f"Python can see /tmp/Rlibs: {os.path.exists('/tmp/Rlibs')}")
+                if os.path.exists('/tmp/Rlibs'):
+                    logger.info(f"Contents: {os.listdir('/tmp/Rlibs')}")
+                test_cmd = ["Rscript", "-e", 'cat("R sees /tmp/Rlibs:", dir.exists("/tmp/Rlibs"), "\\n"); if(dir.exists("/tmp/Rlibs")) print(list.files("/tmp/Rlibs"))']
+                test_result = subprocess.run(test_cmd, text=True, capture_output=True, cwd=r_entry_dir)
+                logger.info(f"R test just before main script: {test_result.stdout}")
+                logger.info(f"R test stderr: {test_result.stderr}")
+
                 # run R entry as a subprocess
                 try:
                     r_func = subprocess.run(
