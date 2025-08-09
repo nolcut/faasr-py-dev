@@ -346,11 +346,7 @@ def faasr_func_dependancy_install(faasr_source, action):
             for package in pypi_packages:
                 faasr_pip_install(package)
     elif "FunctionCRANPackage" in faasr_source and func_type == "R":
-        cran_packages = ["jsonlite", "httr"]
-
-        user_packages = faasr_source["FunctionCRANPackage"].get(func_name)
-        if user_packages:
-            cran_packages.extend(user_packages)
+        cran_packages = faasr_source["FunctionCRANPackage"].get(func_name)
 
         lib_path = "/tmp/Rlibs"
         os.makedirs(lib_path, exist_ok=True)

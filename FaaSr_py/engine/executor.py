@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import shutil
 import subprocess
 import sys
 from multiprocessing import Process
@@ -65,8 +66,21 @@ class Executor:
                 func_res = py_func.exitcode
             elif func_type == "R":
                 # path to R function handler
-                r_entry_dir = Path(__file__).parent.parent / "client"
-                r_entry_path = r_entry_dir / "r_user_func_entry.R"
+                client_dir = Path(__file__).parent.parent / "client"
+
+                r_files = [
+                    client_dir / "r_user_func_entry.R",
+                    client_dir / "r_func_helper.R",
+                    client_dir / "r_client_stubs.R"
+                ]
+
+                # Ensure /tmp exists
+                os.makedirs("/tmp/Rlibs", exist_ok=True)
+
+                # Copy each file
+                for src in r_files:
+                    dst = Path("/tmp/Rlibs") / src.name
+                    shutil.copy(src, dst)
 
                 logger.info(f"Starting function: {func_name} (R)")
 
@@ -76,7 +90,7 @@ class Executor:
                 if os.path.exists('/tmp/Rlibs'):
                     logger.info(f"Contents: {os.listdir('/tmp/Rlibs')}")
                 test_cmd = ["Rscript", "-e", 'cat("R sees /tmp/Rlibs:", dir.exists("/tmp/Rlibs"), "\\n"); if(dir.exists("/tmp/Rlibs")) print(list.files("/tmp/Rlibs"))']
-                test_result = subprocess.run(test_cmd, text=True, capture_output=True, cwd=r_entry_dir)
+                test_result = subprocess.run(test_cmd, text=True, capture_output=True, cwd="/tmp/Rlibs")
                 logger.info(f"R test just before main script: {test_result.stdout}")
                 logger.info(f"R test stderr: {test_result.stderr}")
 
@@ -85,12 +99,12 @@ class Executor:
                     r_func = subprocess.run(
                         [
                             "Rscript",
-                            str(r_entry_path),
+                            "/tmp/r_user_func_entry.R",
                             func_name,
                             json.dumps(user_args),
                             self.faasr["InvocationID"],
                         ],
-                        cwd=r_entry_dir,
+                        cwd="/tmp",
                     )
                 except Exception as e:
                     logger.error(f"Error running R function: {e}")
